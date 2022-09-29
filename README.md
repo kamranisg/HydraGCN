@@ -81,5 +81,5 @@ model_yaml_dir = '../base/configs/HAM10K/Hydra_HAM10K.yaml'
 python /applications/loop_experiments.py
 ``` 
 
-Problems ? Happy Debugging !! 
+Problems ? Happy Debugging !
   
