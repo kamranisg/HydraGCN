@@ -1,0 +1,415 @@
+# Blueprint
+InceptionGCN:
+    num: 3  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyGAT
+                order:
+                    - 0
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model1:
+                model: PyGAT
+                order:
+                    - 1
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model2:
+                model: PyGAT
+                order:
+                    - 2
+                layers: 3
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model3:
+                model: PyGAT
+                order:
+                    - 3
+                layers: 4
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model4:
+                model: PyGAT
+                order:
+                    - 4
+                layers: 5
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer4:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model5:
+                model: PyGAT
+                order:
+                    - 5
+                layers: 6
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer4:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer5:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+        ParallelAgg:
+            Agg0:
+                agg: Concat
+                order:
+                    - 0
+
+    # -----------------------------------------
+    # Pair 1
+    DynamicBlock1:
+        distributor:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyGAT
+                order:
+                    - 0
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model1:
+                model: PyGAT
+                order:
+                    - 1
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model2:
+                model: PyGAT
+                order:
+                    - 2
+                layers: 3
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model3:
+                model: PyGAT
+                order:
+                    - 3
+                layers: 4
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model4:
+                model: PyGAT
+                order:
+                    - 4
+                layers: 5
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer4:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+            Model5:
+                model: PyGAT
+                order:
+                    - 5
+                layers: 6
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+                layer0:
+                    in_channels:
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer1:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer2:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer3:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer4:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: True
+                layer5:
+                    in_channels: 24
+                    out_channels: 8
+                    heads: 3
+                    concat: False
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                order:
+                    - 0
+
+    # -----------------------------------------
+    # Pair 2
+    DynamicBlock2:
+        distributor:
+            - 0
+        ParallelMLP:
+            Model0:
+                model: PyMLP
+                order:
+                    - 0
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_features:
+                    out_features:
+
+    AggregatorBlock2:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0

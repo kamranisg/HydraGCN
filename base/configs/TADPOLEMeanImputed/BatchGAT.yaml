@@ -1,0 +1,37 @@
+GAT:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+        ParallelGNN:
+            Model0:
+                model: PyGAT
+                order:
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 128
+                    heads: 3
+                    concat: True
+
+                layer1:
+                    in_channels: 384
+                    out_channels:
+                    heads: 3
+                    concat: False
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0

@@ -1,0 +1,72 @@
+# Blueprint
+Decoder:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyMLP
+                order:
+                    - 0
+                layers: 3
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_features:
+                    out_features: 128
+
+                layer1:
+                    in_features: 128
+                    out_features: 256
+
+                layer2:
+                    in_features: 256
+                    out_features:
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0
+
+
+    # -----------------------------------------
+    # Second block linear layer
+    DynamicBlock1:
+        distributor:
+            - 0
+            - 1
+        ParallelMLP:
+            Model0:
+                model: PyMLP
+                order:
+                    - 0
+                    - 1
+                activation:
+                    name: ReLU
+                layers: 1
+                layer0:
+                    in_features: 64
+                    out_features: 10
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+                - 1
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: 1
+                order:
+                    - 0

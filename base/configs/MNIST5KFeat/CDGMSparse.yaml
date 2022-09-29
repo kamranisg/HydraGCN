@@ -1,0 +1,82 @@
+# Blueprint
+DGM:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # First block
+    DynamicBlock0:
+        distributor:
+            - 0
+        ParallelMLP:
+            Model0:
+                model: PyCDGMSparse
+                order:
+                    - 0
+                layers: 3
+                activation:
+                    name: ReLU
+                layer0:
+                    in_features:
+                    out_features: 32
+                layer1:
+                    in_features: 32
+                    out_features: 16
+                layer2:
+                    in_features: 16
+                    out_features:
+
+#                # Layer will be used for GNN
+#                layer2:
+#                    in_features: 392
+#                    out_features:
+
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0
+                    - 1
+
+
+#    # -----------------------------------------
+#    # Second block
+#    DynamicBlock1:
+#        distributor:
+#            - 0
+#
+#        ParallelMLP:
+#            Model0:
+#                model: PyCDGM
+#                order:
+#                    - 0
+#                layers: 3
+#                activation:
+#                    name: ReLU
+#                layer0:
+#                    in_features:
+#                    out_features: 32
+#                layer1:
+#                    in_features: 32
+#                    out_features: 16
+#
+#                # Layer will be used for GNN
+#                layer2:
+#                    in_features: 217
+#                    out_features:
+#
+#
+#    AggregatorBlock1:
+#        distributor:
+#            -   - 0
+#        ParallelAgg:
+#            Agg0:
+#                agg: Pass
+#                order:
+#                    - 0

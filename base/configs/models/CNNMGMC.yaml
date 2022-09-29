@@ -1,0 +1,384 @@
+# Blueprint
+MGMC:
+#    num: 5  # Number of Dynamic and Aggregator Block pairs
+    # -----------------------------------------
+    # First block
+    DynamicBlock0:
+        distributor:
+        ParallelImputer1D:
+            Model0:
+                model: NanToZero
+                order:
+                layers: 1
+                layer0:
+                    dim:
+                        - 0
+                    dropout: .5
+                    in_features:
+
+    AggregatorBlock0:
+        distributor:
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+
+    ### HOW TO INCLUDE IMAGES HERE #########
+
+    # write code here
+
+    ########################################
+
+    # -----------------------------------------
+    # Second block
+    DynamicBlock1:
+        distributor:
+            # Dummy multi-feature vector input
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - x # x is temp for images
+        ParallelGNN:
+            Model0:
+                # Implemented RGCN as it is not possible to use the same GCN at every timestep.
+                model: PyRGCN
+                order:
+                    - 0
+                    - 1
+                    - 2
+                timesteps: 5
+                layers: 2 # Every Odd layers kwargs will be for GNN and Even layers will be for RNN
+                activation:
+                    name: ReLU
+
+                layer0:
+                    in_channels:
+                    out_channels: 128
+                    K: 5
+
+                layer1:
+                    input_size: 128
+                    hidden_size: 128
+
+                fc_layer:
+                    in_features: 128
+                    out_features: 336 #438
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 3
+                    - 4
+                    - 5
+                layers: 1
+                layer0:
+                    in_channels: 438
+                    out_channels: 438
+
+        ParallelCNN:
+            Model0:
+                model: AlexNet
+                order:
+                    - x
+                layers: 1
+                out_features: ##64
+
+                layer0:
+                    pretrained: true
+
+            Model1:
+                model: PyMLP
+                #...
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+                - 3
+            -
+                - 1
+                - 4
+            -
+                - 2
+                - 5
+            -
+                - x
+
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                dim: -1
+                order:
+                    - 0
+                    - 1
+                    - 2
+
+            Agg1:
+                agg: Pass
+                order:
+                    - x
+
+    # -----------------------------------------
+    # Third block
+    DynamicBlock2:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - x
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                    - 1
+                    - 2
+                layers: 1
+                layer0:
+                    input_size: #438
+                    hidden_size: #438
+
+            Model1:
+                model: PyPass
+                order:
+                    - x
+                layers: 1
+                layer0:
+                    in_channels: #??
+                    out_channels: #??
+
+
+    AggregatorBlock2:
+        distributor:
+            # These inputs will be used for self-attention
+            -
+                - 0
+                - 1
+                - 2
+
+            # These inputs will be passed along until the end to calculate RMSE
+            -
+                - 0
+            -
+                - 1
+            -
+                - 2
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: 1
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+
+            Agg2:
+                agg: Pass
+                order:
+                    - x
+
+    # -----------------------------------------
+    # Fourth block
+    DynamicBlock3:
+        distributor:
+            - 0
+            - 0
+            - 1
+            - 2
+            - 3
+            - x
+
+        ParallelRNN:
+            Model0:
+                model: PyLSTM
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size: 336 #438
+                    hidden_size: 128
+
+                fc_layer:
+                    in_features: 128
+                    out_features: 3
+
+                activation:
+                    name: Softmax
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                layers: 1
+                layer0:
+                    input_size: 336 #438
+                    hidden_size: 336 #438
+
+            Model1:
+                model: PyPass
+                order:
+                    - x
+                layers: 1
+                layer0:
+                    in_channels: #??
+                    out_channels: #??
+
+
+
+    AggregatorBlock3:
+        distributor:
+            -   - 0
+            -   - 1
+            -   - 2
+            -   - 3
+            -   - 4
+            -   - x
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: -1
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+
+            Agg2:
+                agg: Pass
+                order:
+                    - x
+
+    # -----------------------------------------
+    # Fifth block
+    DynamicBlock4:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size: 3
+                    hidden_size: 3
+            Model1:
+                model: PyPass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                layers: 1
+                layer0:
+                    input_size: 336 #438
+                    hidden_size: 336 #438
+
+
+    AggregatorBlock4:
+        distributor:
+            -   - 0
+                - 1
+            -   - 2
+            -   - 3
+            -   - 4
+            -   - x
+        ParallelAgg:
+            Agg0:
+                agg: Multiply
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+            Agg2:
+                agg: Pass
+                order:
+                    - x
+
+    # -----------------------------------------
+    # Sixth block
+    DynamicBlock5:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3
+            - x
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                layers: 1
+                layer0:
+                    input_size: 336 #438
+                    hidden_size: 336 #438
+
+            Model1:
+                model: PyPass
+                order:
+                    - x
+                layers: 1
+                layer0:
+                    input_size: #??
+                    hidden_size: #??
+
+    AggregatorBlock5:
+        distributor:
+            -   - 0
+            -   - 1
+            -   - 1
+            -   - 2
+            -   - 2
+            -   - 3
+            -   - 3
+            -   - x
+
+
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                    - 6
+
+            Agg2:
+                agg: Pass
+                order:
+                    - x

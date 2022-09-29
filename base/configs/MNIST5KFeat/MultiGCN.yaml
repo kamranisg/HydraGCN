@@ -1,0 +1,202 @@
+# Blueprint
+MultiGCN:
+    num: 4  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # First block will learn feature representations using GCN
+    DynamicBlock0:
+        distributor:
+            - 0
+            - 1
+            - 2
+        ParallelGNN:
+            Model0:
+                model: PyGCN
+                order:
+                    - 0
+                    - 1
+                    - 2
+                layers: 2
+                activation:
+                    name: ReLU
+
+                layer0:
+                    in_channels:
+                    out_channels: 217
+
+                layer1:
+                    in_channels: 217
+                    out_channels: 3
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+                - 1
+                - 2
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: 1
+                order:
+                    - 0
+
+#    AggregatorBlock0:
+#        distributor:
+#            -
+#                - 0
+#            -
+#                - 1
+#            -
+#                - 2
+#
+#        ParallelAgg:
+#            Agg0:
+#                agg: Pass
+#                order:
+#                    - 0
+#                    - 1
+#                    - 2
+    # -----------------------------------------
+    # Second block linear layer
+#    DynamicBlock1:
+#        distributor:
+#            - 0
+#            - 1
+#            - 2
+#        ParallelMLP:
+#            Model0:
+#                model: PyMLP
+#                order:
+#                    - 0
+#                    - 1
+#                    - 2
+#                activation:
+#                    name: ReLU
+#                layers: 1
+#                layer0:
+#                    in_features: 64
+#                    out_features: 10
+#
+#    AggregatorBlock1:
+#        distributor:
+#            -
+#                - 0
+#                - 1
+#                - 2
+#        ParallelAgg:
+#            Agg0:
+#                agg: Stack
+#                dim: 1
+#                order:
+#                    - 0
+
+    # -----------------------------------------
+    # Third block learns patient specific self-attention using LSTMs.
+    DynamicBlock1:
+        distributor:
+            - 0
+            - 0
+
+        ParallelRNN:
+            Model0:
+                model: PyLSTM
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size: 3
+                    hidden_size: 10
+
+                fc_layer:
+                    in_features: 10
+                    out_features: 3
+
+                activation:
+                    name: Softmax
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 1
+                layers: 1
+                layer0:
+                    input_size:
+                    hidden_size:
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+            -
+                - 1
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: -1
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+
+    # -----------------------------------------
+    # Fourth block
+    DynamicBlock2:
+        distributor:
+            - 0
+            - 1
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                    - 1
+                layers: 1
+                layer0:
+                    input_size:
+                    hidden_size:
+                        - 1
+                        - 10
+
+
+    AggregatorBlock2:
+        distributor:
+            -
+                - 0
+                - 1
+        ParallelAgg:
+            Agg0:
+                agg: Multiply
+                order:
+                    - 0
+
+# -----------------------------------------
+# Fifth block
+    DynamicBlock3:
+        distributor:
+            - 0
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size:
+                    hidden_size:
+
+    AggregatorBlock3:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                dim: 1
+                order:
+                    - 0

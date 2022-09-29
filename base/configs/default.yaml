@@ -1,0 +1,69 @@
+# Folder location of user-defined classes
+include: /workspace/supergcn_2.0/setups/
+
+# Dataset class names
+dataset:
+  name: HAM10K
+  datatype: BatchDataset
+  edge_criterion: HAM10KEdgeCriterion #UCIThyroidEdgeCriterion  # MNISTEdgeCriterion ChestXray14SLEdgeCriterion
+  p_missing: 0.0 # [0.0, 1.0) level of missingness, 0.0 means use all available data
+  preprocess_feat: false
+
+# Model class names
+model:
+  name: DynamicNet  # This is the general builder class for all models
+  yaml_path:  '../base/configs/HAM10K/Hydra_HAM10K.yaml'
+
+user_transforms:
+  - RandomRotation:
+      degrees: 1
+
+# Trainer class name
+train:
+  name: KFoldModelTrainer
+  tensorboard: true
+
+infer:
+  name:
+
+# Arguments currently in use.
+batchtype: 'batch'
+folds: 3
+train_mode: classification
+meta_columns:
+#  - 0
+  - 0
+
+#  - 4
+
+curr_model_name: 'dummy' # dummy argument for now
+multigraph: true
+epochs: 1 #600
+patience: 20
+supervision_rate: 1.0
+num_print: 10
+no_cuda: false
+GPU_device: '0'
+writing: false
+seed: 42
+
+extract_dim: 64
+extract_file: '../data/{}Extract/extracted_features_f{}_b{}_l{}.npy'
+
+label_list:
+#  - 3
+#  - 5
+#  - 6
+#MNISTthreshold: 1400
+lr: 0.001
+weight_decay: 0.005
+#nfeat: 392
+#ngout: 10
+#nhid: 64
+#nheads: 5
+dropout: 0.3
+#alpha: 0.3
+#gnn_layers:
+#  - 392
+#  - 64
+#  - 10

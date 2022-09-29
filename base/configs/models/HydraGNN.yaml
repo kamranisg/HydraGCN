@@ -1,0 +1,230 @@
+# Blueprint
+HydraGNN:
+    num: 4  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+        ParallelImputer1D:
+            Model0:
+                model: MeanImpute
+                order:
+                layers: 1
+                layer0:
+                    dim:
+                        - 0
+                    in_features:
+
+        ParallelImputer2D:
+            Model0:
+                model: MeanImpute
+                order:
+                layers: 1
+                layer0:
+                    dim:
+                        - 0
+                        - 1
+                    in_features:
+
+        ParallelImputer3D:
+            Model0:
+                model: MeanImpute
+                order:
+                layers: 1
+                layer0:
+                    dim:
+                        - 0
+                        - 2
+                        - 3
+                    in_channels:
+
+
+    AggregatorBlock0:
+        distributor:
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+
+    # -----------------------------------------
+    # Pair 1
+    DynamicBlock1:
+        distributor:
+        ParallelCNN:
+            Model0:
+                model: PyCNN
+                order:
+                layers: 2
+                activation:
+                    name: ReLU
+
+                layer0:
+                    in_channels: 1
+                    out_channels: 6
+                    kernel_size: 3
+
+                layer1:
+                    in_channels: 6
+                    out_channels: 12
+                    kernel_size: 3
+
+                mlp_layer:
+                    out_features: 16
+
+#            Model0:
+#                model: ResNet
+#                order:
+#                layers: 1
+#                resnet: 18
+#                out_features: 128
+#
+#                layer0:
+#                    pretrained: true
+#
+#            Model0:
+#                model: AlexNet
+#                order:
+#                layers: 1
+#                out_features: 128
+#
+#                layer0:
+#                    pretrained: true
+
+
+#            Model0:
+#                model: VGG
+#                order:
+#                layers: 1
+#                vgg: 11
+#                out_features: 128
+#
+#                layer0:
+#                    pretrained: true
+
+#            Model0:
+#                model: DenseNet
+#                order:
+#                layers: 1
+#                densenet: 121
+#                out_features: 128
+#
+#                layer0:
+#                    pretrained: true
+
+
+        ParallelGNN:
+            Model0:
+                model: PyGAT
+                order:
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 32
+                    concat: True
+                    heads: 2
+
+                layer1:
+                    in_channels: 64
+                    out_channels: 32
+                    concat: True
+                    heads: 2
+
+#            Model0:
+#                model: PySAGEConv
+#                order:
+#                layers: 2
+#                activation:
+#                    name: LeakyReLU
+#                    negative_slope: 0.2
+#
+#                layer0:
+#                    in_channels:
+#                    out_channels: 32
+#
+#
+#                layer1:
+#                    in_channels: 32
+#                    out_channels: 32
+
+
+        ParallelRNN:
+            Model0:
+                model: PyGRU
+                order:
+                layers: 1
+                layer0:
+                    input_size:
+                    hidden_size: 64
+
+                fc_layer:
+                    in_features: 64
+                    out_features: 32
+
+                activation:
+                    name: ReLU
+
+    AggregatorBlock1:
+        distributor:
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+
+    # -----------------------------------------
+    # Pair 2
+    DynamicBlock2:
+        distributor:
+        ParallelMLP:
+            Model0:
+                model: PyMLP
+                order:
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_features:
+                    out_features: 64
+
+                layer1:
+                    in_features: 64
+                    out_features: 64
+
+    AggregatorBlock2:
+        distributor:
+
+        ParallelAgg:
+            Agg0:
+                agg: Concat
+                order:
+
+    # -----------------------------------------
+    # Pair 3
+    DynamicBlock3:
+        distributor:
+
+        ParallelMLP:
+            Model0:
+              model: PyMLP
+              order:
+              layers: 1
+              activation:
+                name: LeakyReLU
+                negative_slope: 0.2
+
+              layer0:
+                in_features:
+                out_features:
+
+    AggregatorBlock3:
+        distributor:
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:

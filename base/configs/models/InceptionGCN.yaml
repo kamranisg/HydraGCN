@@ -1,0 +1,134 @@
+# Blueprint
+InceptionGCN:
+    num: 3  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyChebConv
+                order:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 16
+                    K:
+                        - 1
+                        - 2
+                        - 3
+                        - 4
+                        - 5
+                        - 6
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+        ParallelAgg:
+            Agg0:
+                agg: Concat
+                order:
+                    - 0
+
+    # -----------------------------------------
+    # Pair 1
+    DynamicBlock1:
+        distributor:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyChebConv
+                order:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 16
+                    K:
+                        - 1
+                        - 2
+                        - 3
+                        - 4
+                        - 5
+                        - 6
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+        ParallelAgg:
+            Agg0:
+                agg: Pool
+                order:
+                    - 0
+
+    # -----------------------------------------
+    # Pair 2
+    DynamicBlock2:
+        distributor:
+            - 0
+        ParallelMLP:
+            Model0:
+                model: PyMLP
+                order:
+                    - 0
+                layers: 1
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_features:
+                    out_features:
+
+    AggregatorBlock2:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0

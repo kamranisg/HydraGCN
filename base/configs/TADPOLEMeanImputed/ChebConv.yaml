@@ -1,0 +1,35 @@
+ChebConv:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+        ParallelGNN:
+            Model0:
+                model: PyChebConv
+                order:
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 217
+                    K: 3
+
+                layer1:
+                    in_channels: 217
+                    out_channels:
+                    K: 3
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0

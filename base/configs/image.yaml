@@ -1,0 +1,63 @@
+# Folder location of user-defined classes
+include: /workspace/supergcn_2.0/setups/
+
+# Dataset class names
+dataset:
+  name: Covid19ICU
+  datatype: BatchDataset
+  edge_criterion: MNISTEdgeCriterion
+
+# Model class names
+model:
+  name: DynamicNet
+
+  pre_processing:
+    input:
+      img: CNN
+      feat: ParallelGNN
+      seq: ParallelRNN
+
+    agg: concat
+  intermediate:
+    ratio_units:
+  output_layer:
+    -
+
+# Trainer class name
+train:
+  name: ClassificationTrainer
+
+infer:
+  name:
+
+# Arguments currently in use.
+batchtype: 'full'
+folds: 10
+train_mode: classification
+meta_columns:
+  - 0
+multigraph: false
+epochs: 1000
+patience: 30
+num_print: 10
+no_cuda: false
+GPU_device: '0'
+writing: false
+seed: 42
+batch_size: 200
+label_list:
+  - 0
+  - 1
+  - 2
+lr: 0.001
+weight_decay: 0.005
+nfeat: 392
+ngout: 10
+nhid: 64
+nheads: 5
+dropout: 0.3
+alpha: 0.3
+gnn_layers:
+  - 392
+  - 64
+  - 10

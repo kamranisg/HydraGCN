@@ -1,0 +1,38 @@
+PyMLP:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+        ParallelMLP:
+            Model0:
+                model: PyMLP
+                order:
+                layers: 3
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_features:
+                    out_features: 217
+
+                layer1:
+                    in_features: 217
+                    out_features: 120
+
+                layer2:
+                    in_features: 120
+                    out_features:£££$
+
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0

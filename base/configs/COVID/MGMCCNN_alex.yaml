@@ -1,0 +1,363 @@
+# Blueprint
+MGMCGAT:
+    # num: 7  # Number of Dynamic and Aggregator Block pairs
+    # -----------------------------------------
+    # First block
+    DynamicBlock0:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3 # How do we know, those are the images?
+        ParallelImputer1D:
+            Model0:
+                model: NanToZero
+                order:
+                    - 1 # 0
+                    - 2 # 1
+                    - 3 # 2
+                layers: 1
+                layer0:
+                    dim:
+                        - 0
+                    dropout: .5
+                    in_features:
+        ParallelCNN:
+            Model0:
+                model: PyCNN
+                order:
+                    - 0 # 3
+                layers: 2
+                activation:
+                    name: ReLU
+
+                layer0:
+                    in_channels: 1
+                    out_channels: 6
+                    kernel_size: 3
+
+                layer1:
+                    in_channels: 6
+                    out_channels: 12
+                    kernel_size: 3
+
+                mlp_layer:
+                    in_features:
+                    out_features: 16
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+            -
+                - 1
+            -
+                - 2
+            -
+                - 3            #output of CNN (image)
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+
+    # -----------------------------------------
+    # Second block
+    DynamicBlock1:
+        distributor:
+            # Dummy multi-feature vector input
+            - 0
+            - 1
+            - 2
+            - 0
+            - 1
+            - 2
+            - 3             #output of CNN (image)
+        ParallelGNN:
+            Model0:
+                # Implemented RGCN as it is not possible to use the same GCN at every timestep.
+                model: PyRGCN
+                order:
+                    - 0
+                    - 1
+                    - 2
+                timesteps: 5
+                layers: 2 # Every Odd layers kwargs will be for GNN and Even layers will be for RNN
+                activation:
+                    name: ReLU
+
+                layer0:
+                    in_channels:
+                    out_channels: 128
+                    K: 5
+
+                layer1:
+                    input_size: 128
+                    hidden_size: 128
+
+                fc_layer:
+                    in_features: 128
+                    out_features: 84 #336 #438
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 3
+                    - 4
+                    - 5
+                    - 6         #output of CNN (image)
+                layers: 1
+                layer0:
+                    in_channels: 84 #336 #438
+                    out_channels: 84 #336 #438
+
+    AggregatorBlock1:
+        distributor:
+            -
+                - 0
+                - 3
+            -
+                - 1
+                - 4
+            -
+                - 2
+                - 5
+            -
+                - 6             #output of CNN (image)
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                dim: -1
+                order:
+                    - 0
+                    - 1
+                    - 2
+            Agg3:
+                agg: Pass
+                order:
+                    - 3      #output of CNN (image)
+
+    # -----------------------------------------
+    # Third block
+    DynamicBlock2:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3             #output of CNN (image)
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                    - 1
+                    - 2
+                    - 3             #output of CNN (image)
+                layers: 1
+                layer0:
+                    input_size: #438
+                    hidden_size: #438
+
+
+    AggregatorBlock2:
+        distributor:
+            # These inputs will be used for self-attention
+            -
+                - 0
+                - 1
+                - 2
+
+            # These inputs will be passed along until the end to calculate RMSE
+            -
+                - 0
+            -
+                - 1
+            -
+                - 2
+            -
+                - 3             #output of CNN (image)
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: 1
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4             #output of CNN (image)
+
+    # -----------------------------------------
+    # Fourth block
+    DynamicBlock3:
+        distributor:
+            - 0
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4             #output of CNN (image)
+
+        ParallelRNN:
+            Model0:
+                model: PyLSTM
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size: 84 #336 #438
+                    hidden_size: 128
+
+                fc_layer:
+                    in_features: 128
+                    out_features: 3
+
+                activation:
+                    name: Softmax
+
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5                 #output of CNN (image)
+                layers: 1
+                layer0:
+                    input_size: 84 #336 #438
+                    hidden_size: 84 #336 #438
+
+    AggregatorBlock3:
+        distributor:
+            -   - 0
+            -   - 1
+            -   - 2
+            -   - 3
+            -   - 4
+            -   - 5                 #output of CNN (image)
+        ParallelAgg:
+            Agg0:
+                agg: Stack
+                dim: -1
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5            #output of CNN (image)
+
+    # -----------------------------------------
+    # Fifth block
+    DynamicBlock4:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5                     #output of CNN (image)
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                layers: 1
+                layer0:
+                    input_size: 3
+                    hidden_size: 3
+            Model1:
+                model: PyPass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5                 #output of CNN (image)
+                layers: 1
+                layer0:
+                    input_size: 84 #336 #438
+                    hidden_size: 84 #336 #438
+
+
+    AggregatorBlock4:
+        distributor:
+            -   - 0
+                - 1
+            -   - 2
+            -   - 3
+            -   - 4
+            -   - 5                     #output of CNN (image)
+        ParallelAgg:
+            Agg0:
+                agg: Multiply
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4                 #output of CNN (image)
+
+    # -----------------------------------------
+    # Sixth block
+    DynamicBlock5:
+        distributor:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+        ParallelMLP:
+            Model0:
+                model: PyPass
+                order:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4                 #output of CNN (image)
+                layers: 1
+                layer0:
+                    input_size: 84 #336 #438
+                    hidden_size: 84 #336 #438
+
+    AggregatorBlock5:
+        distributor:
+            -   - 0
+            -   - 1
+            -   - 1
+            -   - 2
+            -   - 2
+            -   - 3
+            -   - 3
+            -   - 4                 #output of CNN (image)
+
+        ParallelAgg:
+            Agg0:
+                agg: Sum
+                order:
+                    - 0
+            Agg1:
+                agg: Pass
+                order:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                    - 6
+                    - 7             #output of CNN (image)
+
+    # ----------------------------

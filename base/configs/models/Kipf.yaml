@@ -1,0 +1,36 @@
+# Blueprint
+Kipf:
+    num: 1  # Number of Dynamic and Aggregator Block pairs
+
+    # -----------------------------------------
+    # Pair 0
+    DynamicBlock0:
+        distributor:
+            - 0
+        ParallelGNN:
+            Model0:
+                model: PyGCN
+                order:
+                    - 0
+                layers: 2
+                activation:
+                    name: LeakyReLU
+                    negative_slope: 0.2
+
+                layer0:
+                    in_channels:
+                    out_channels: 16
+
+                layer1:
+                    in_channels: 16
+                    out_channels:
+
+    AggregatorBlock0:
+        distributor:
+            -
+                - 0
+        ParallelAgg:
+            Agg0:
+                agg: Pass
+                order:
+                    - 0
