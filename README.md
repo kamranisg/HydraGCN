@@ -1,2 +1,2 @@
 # HydraGCN
- Multi-Modal data analysis framework for medical applica%ons
+ Multi-Modal data analysis framework for medical applications
