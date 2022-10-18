@@ -4,10 +4,10 @@
  Multi-Modal data analysis framework for medical applications 
  
  `GCN` `Multi-Modality` `Alzeihmer_Prediction` `COVID-19_Classification` `Skin_Lesion_Detection`
- 
-## About 
-### (Applied Praktikum - Machine Learning in Medical Imaging - TU Munich)
 
+## About 
+
+<img src = "https://github.com/kamranisg/HydraGCN/blob/master/image.png" height="400" width="600">
 In  medical  research,  multi-modal  datasets  from  large-scale  population-based studies  are  an  essen:al  tool  towards  better  diagnosis  and  treatment  of  disease. Multimodal data comprises imaging and non-imaging data and is available in many domains.  In technical research, such datasets serve as enablers of Computer-Aided Diagnosis (CADx) with machine learning (ML). In this project, we will be focusing on four such multi-modal dataset HCP dataset and UK Biobank for the application of age and gender predictoon. In  this  project,  we  analyze  multi-modal  datasets  with  all  its  challenges  such  as imbalance,  small  size,  missing  values  etc  with  the  perspec:ve  of  graph convolu:onal networks. We will work on a framework developed at CAMP called *‘HydraGCN’*  which  is designed  with  a  multi-head  input  and  output  architecture, which  allows  for  flexible  modeling  of  multimodal  input  data  and  which  enables multi-target learning through separate output heads and losses.
 
 
